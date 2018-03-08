@@ -6,7 +6,7 @@
 
 
 #import "SendSMS.h"
-#import "RCTUtils.h"
+#import <React/RCTUtils.h>
 
 @implementation SendSMS
 
