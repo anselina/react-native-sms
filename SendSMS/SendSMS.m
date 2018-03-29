@@ -35,6 +35,29 @@ RCT_EXPORT_METHOD(send:(NSDictionary *)options :(RCTResponseSenderBlock)callback
           messageController.recipients = recipients;
         }
 
+        // If device can send attachments and an attachment was provided (only images are supported)
+        if ([MFMessageComposeViewController canSendAttachments]) {
+          if (options[@"attachment"] && options[@"attachment"][@"path"] && options[@"attachment"][@"type"]) {
+            NSString *attachmentPath = options[@"attachment"][@"path"];
+            NSString *attachmentType = options[@"attachment"][@"type"];
+            NSString *attachmentName = options[@"attachment"][@"name"];
+
+            NSData *fileData = [NSData dataWithContentsOfFile:attachmentPath];
+            NSString *mimeType;
+            if ([attachmentType isEqualToString:@"jpg"]) {
+              mimeType = @"image/jpeg";
+            } else if ([attachmentType isEqualToString:@"jpeg"]) {
+              mimeType = @"image/jpeg";
+            } else if ([attachmentType isEqualToString:@"png"]) {
+              mimeType = @"image/png";
+            } else if ([attachmentType isEqualToString:@"gif"]) {
+              mimeType = @"image/gif";
+            }
+
+            [messageController addAttachmentData:fileData typeIdentifier:mimeType filename:attachmentName];
+          }
+        }
+
         messageController.messageComposeDelegate = self;
         UIViewController *currentViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
         while(currentViewController.presentedViewController) {
